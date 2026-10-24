@@ -2,7 +2,7 @@
 
 Python implementation of **Orthogonal Learning-Based Population Encoding (OLBPE)** for parameter identification of proton exchange membrane fuel cell (PEMFC) stacks with the semi-empirical Amphlett/Mann model (seven parameters ξ1, ξ2, ξ3, ξ4, λ, b, Rc), together with the complete benchmark reported in the paper: four competitor algorithms, 30 paired runs (same seeds and initial populations), exact Wilcoxon signed-rank and Friedman tests, an ablation study and every figure.
 
-> Paper: S. R. Qasim, A. Adlhussain, N. H. Abbas, H. Salam, *Orthogonal Learning-Based Population Encoding (OLBPE) for Accurate and Reproducible PEM Fuel Cell Parameter Estimation* (under review).
+> Paper: S. R. Qasim, A. A. H. Sharba, N. H. Abbas, H. S. Saeed, *Orthogonal Learning-Based Population Encoding (OLBPE) for Accurate and Reproducible PEM Fuel Cell Parameter Estimation* (under review).
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23620129.svg)](https://doi.org/10.5281/zenodo.23620129)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ahmedsharba-svg/OLBPE-PEMFC/blob/main/reproduce_on_colab.ipynb)
