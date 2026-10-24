@@ -1,0 +1,26 @@
+{
+ "BCS500W": {
+  "friedman_p": 4.6261441803186765e-24,
+  "friedman_chi2": 115.60907504363011,
+  "abl_friedman_p": 1.0,
+  "abl_friedman_chi2": 0.0,
+  "abl_5k_friedman_p": 1.8059473817392713e-10,
+  "abl_5k_friedman_chi2": 54.31451612903235
+ },
+ "SR12": {
+  "friedman_p": 8.594978795147393e-23,
+  "friedman_chi2": 109.66120218579238,
+  "abl_friedman_p": 1.0,
+  "abl_friedman_chi2": 0.0,
+  "abl_5k_friedman_p": 8.776997775847235e-07,
+  "abl_5k_friedman_chi2": 36.17139959432052
+ },
+ "NedStackPS6": {
+  "friedman_p": 1.4671111139734543e-12,
+  "friedman_chi2": 61.40834845735026,
+  "abl_friedman_p": 0.0012497305630313127,
+  "abl_friedman_chi2": 20.000000000000114,
+  "abl_5k_friedman_p": 3.4145248069543494e-11,
+  "abl_5k_friedman_chi2": 57.82719836400827
+ }
+}

@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "OLBPE-PEMFC: Orthogonal Learning-Based Population Encoding for PEM fuel cell parameter identification"
+authors:
+  - family-names: Qasim
+    given-names: Sara Raad
+    affiliation: Mustansiriyah University
+  - family-names: Adlhussain
+    given-names: Ahmed
+    affiliation: Mustansiriyah University
+  - family-names: Abbas
+    given-names: Nidaa H.
+    affiliation: Mustansiriyah University
+  - family-names: Salam
+    given-names: Hisham
+    affiliation: Mustansiriyah University
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/ahmedsharba-svg/OLBPE-PEMFC"

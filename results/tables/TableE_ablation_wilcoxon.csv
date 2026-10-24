@@ -1,0 +1,16 @@
+Stack,comparison,p,p_holm,R_plus,R_minus,n_nonzero,wins,ties,losses,p_holm_ranksum,sign
+BCS 500 W,OLBPE (full) vs w/o EWL,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+BCS 500 W,OLBPE (full) vs w/o ESG,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+BCS 500 W,OLBPE (full) vs w/o OL,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+BCS 500 W,OLBPE (full) vs w/o VTC,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+BCS 500 W,OLBPE (full) vs w/o CWR,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+SR-12 Modular,OLBPE (full) vs w/o EWL,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+SR-12 Modular,OLBPE (full) vs w/o ESG,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+SR-12 Modular,OLBPE (full) vs w/o OL,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+SR-12 Modular,OLBPE (full) vs w/o VTC,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+SR-12 Modular,OLBPE (full) vs w/o CWR,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+NedStack PS6,OLBPE (full) vs w/o EWL,0.5078125,1.0,15.0,30.0,9,6,21,3,1.0,=
+NedStack PS6,OLBPE (full) vs w/o ESG,0.14599609375,0.583984375,19.5,58.5,12,9,18,3,0.22472957095725074,=
+NedStack PS6,OLBPE (full) vs w/o OL,0.057373046875,0.286865234375,82.5,22.5,14,3,16,11,0.1978798285828032,=
+NedStack PS6,OLBPE (full) vs w/o VTC,1.0,1.0,56.0,64.0,15,8,15,7,1.0,=
+NedStack PS6,OLBPE (full) vs w/o CWR,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
