@@ -1,0 +1,7 @@
+Stack,comparison,p,p_holm,R_plus,R_minus,n_nonzero,wins,ties,losses,p_holm_ranksum,sign
+BCS 500 W,OLBPE (full) vs w/o elite attraction,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+BCS 500 W,OLBPE (full) vs w/o elite-worst term,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+SR-12 Modular,OLBPE (full) vs w/o elite attraction,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+SR-12 Modular,OLBPE (full) vs w/o elite-worst term,1.0,1.0,0.0,0.0,0,0,30,0,1.0,=
+NedStack PS6,OLBPE (full) vs w/o elite attraction,0.332305908203125,0.66461181640625,99.0,54.0,17,6,13,11,0.3819131494337782,=
+NedStack PS6,OLBPE (full) vs w/o elite-worst term,0.7265625,0.7265625,13.5,22.5,8,5,22,3,0.5691265505399128,=

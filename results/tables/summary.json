@@ -5,7 +5,11 @@
   "abl_friedman_p": 1.0,
   "abl_friedman_chi2": 0.0,
   "abl_5k_friedman_p": 1.8059473817392713e-10,
-  "abl_5k_friedman_chi2": 54.31451612903235
+  "abl_5k_friedman_chi2": 54.31451612903235,
+  "abl_ewl_friedman_p": 1.0,
+  "abl_ewl_friedman_chi2": 0.0,
+  "abl_ewl_5k_friedman_p": 0.0008819869188235076,
+  "abl_ewl_5k_friedman_chi2": 14.066666666666663
  },
  "SR12": {
   "friedman_p": 8.594978795147393e-23,
@@ -13,7 +17,11 @@
   "abl_friedman_p": 1.0,
   "abl_friedman_chi2": 0.0,
   "abl_5k_friedman_p": 8.776997775847235e-07,
-  "abl_5k_friedman_chi2": 36.17139959432052
+  "abl_5k_friedman_chi2": 36.17139959432052,
+  "abl_ewl_friedman_p": 1.0,
+  "abl_ewl_friedman_chi2": 0.0,
+  "abl_ewl_5k_friedman_p": 0.4915063726155997,
+  "abl_ewl_5k_friedman_chi2": 1.4205607476635345
  },
  "NedStackPS6": {
   "friedman_p": 1.4671111139734543e-12,
@@ -21,6 +29,10 @@
   "abl_friedman_p": 0.0012497305630313127,
   "abl_friedman_chi2": 20.000000000000114,
   "abl_5k_friedman_p": 3.4145248069543494e-11,
-  "abl_5k_friedman_chi2": 57.82719836400827
+  "abl_5k_friedman_chi2": 57.82719836400827,
+  "abl_ewl_friedman_p": 0.16986907720473676,
+  "abl_ewl_friedman_chi2": 3.5454545454545245,
+  "abl_ewl_5k_friedman_p": 0.026002238472443245,
+  "abl_ewl_5k_friedman_chi2": 7.299145299145307
  }
 }
