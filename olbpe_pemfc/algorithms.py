@@ -67,10 +67,11 @@ def safe_chol(C):
 # -------------------------------------------------------------------- OLBPE
 def olbpe(f, lb, ub, rng, pop_size=40, max_fes=40000, n_curve=200,
           EWL=True, ESG=True, OL=True, VTC=True, CWR=True,
+          EWL_ATTR=True, EWL_WORST=True,
           elite_frac=0.2, cwr_frac=0.15):
     """Orthogonal Learning-Based Population Encoding (see Section 3 of the paper).
 
-    EWL elite-worst learning, ESG elite sensitivity guidance (rank-weighted
+    EWL elite-worst learning (EWL_ATTR / EWL_WORST: its two elite terms), ESG elite sensitivity guidance (rank-weighted
     elite covariance), OL stagnation-triggered orthogonal learning with an
     L8(2^7) array, VTC violation-triggered correction, CWR confidence-weighted
     refinement. Each switch can be turned off for the ablation study.
@@ -112,7 +113,12 @@ def olbpe(f, lb, ub, rng, pop_size=40, max_fes=40000, n_curve=200,
                 F = rng.uniform(0.4, 0.9)
                 r1, r2 = rng.choice(N, 2, replace=False)
                 if EWL:
-                    v = U[i] + F * (xe - U[i]) + F * (U[r1] - U[r2]) + 0.25 * a * rng.random() * (xe - worst)
+                    # EWL = elite attraction F(u_e - u_i) + differential term + elite-worst term;
+                    # EWL_ATTR / EWL_WORST switch the two elite terms off separately (EWL decomposition)
+                    attr = F * (xe - U[i]) if EWL_ATTR else 0.0
+                    rr = rng.random()
+                    worst_t = 0.25 * a * rr * (xe - worst) if EWL_WORST else 0.0
+                    v = U[i] + attr + F * (U[r1] - U[r2]) + worst_t
                 else:
                     v = U[i] + F * (U[r1] - U[r2])
                 mask = rng.random(D) < 0.9

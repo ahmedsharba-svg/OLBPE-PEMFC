@@ -27,3 +27,10 @@ ABLATION = {
     "w/o VTC": {"VTC": False},
     "w/o CWR": {"CWR": False},
 }
+
+# EWL decomposition (reviewer check): remove each elite term of EWL separately
+EWL_SPLIT = {
+    "OLBPE (full)": {},
+    "w/o elite attraction": {"EWL_ATTR": False},
+    "w/o elite-worst term": {"EWL_WORST": False},
+}
