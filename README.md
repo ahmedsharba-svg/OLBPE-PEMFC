@@ -4,7 +4,7 @@ Python implementation of **Orthogonal Learning-Based Population Encoding (OLBPE)
 
 > Paper: S. R. Qasim, A. A. H. Sharba, N. H. Abbas, H. S. Saeed, *Exact Global Minima, Identifiability and Controlled Benchmarking in PEM Fuel Cell Parameter Estimation: A Case Study with Orthogonal Learning-Based Population Encoding* (under review).
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23620129.svg)](https://doi.org/10.5281/zenodo.23620129)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24206946.svg)](https://doi.org/10.5281/zenodo.24206946)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ahmedsharba-svg/OLBPE-PEMFC/blob/main/reproduce_on_colab.ipynb)
 
 ## Run on Google Colab (no installation)
