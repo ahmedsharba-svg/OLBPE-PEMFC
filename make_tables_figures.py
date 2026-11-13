@@ -11,9 +11,15 @@ from olbpe_pemfc.stats import wilcoxon_paired_vs, friedman
 
 TAB, FIG = "results/tables", "results/figures"
 os.makedirs(TAB, exist_ok=True); os.makedirs(FIG, exist_ok=True)
-plt.rcParams.update({"font.family": "serif", "font.size": 12, "axes.titlesize": 12, "axes.labelsize": 12,
-                     "legend.fontsize": 10, "xtick.labelsize": 11, "ytick.labelsize": 11, "axes.grid": True, "grid.alpha": 0.3})
-COLORS = ["#0b4f8a", "#d1495b", "#edae49", "#00798c", "#6a4c93", "#7a7a7a"]
+# Journal artwork rules (Springer): sans-serif lettering 8-12 pt at final size, no titles
+# inside figures, panels labelled (a), (b), (c); 600 dpi PNG plus vector PDF.
+plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial", "Liberation Sans", "DejaVu Sans"],
+                     "mathtext.fontset": "dejavusans", "font.size": 8.5, "axes.labelsize": 8.5,
+                     "legend.fontsize": 7.5, "xtick.labelsize": 8, "ytick.labelsize": 8,
+                     "axes.grid": True, "grid.alpha": 0.3, "axes.linewidth": 0.7, "lines.linewidth": 1.2})
+COLORS = ["#0b4f8a", "#d1495b", "#e09f1f", "#00798c", "#6a4c93", "#7a7a7a", "#3b7d23"]
+STYLES = ["-", "--", "-.", ":", (0, (5, 1, 1, 1)), (0, (1, 1)), (0, (3, 1, 1, 1, 1, 1))]
+W2 = 6.7                       # full text width (inches) = 170 mm
 
 
 def write(name, rows):
@@ -31,24 +37,43 @@ def best_run(res, stack, name):
     return min((r for r in res if r["stack"] == stack and r["algorithm"] == name), key=lambda r: r["RMSE"])
 
 
-def convergence(res, stack, names, fname, title, max_fes=C.MAX_FES):
-    fig, ax = plt.subplots(figsize=(5.2, 3.6))
+def panel(ax, k):
+    ax.text(-0.02, 1.03, f"({'abc'[k]})", transform=ax.transAxes, ha="right", va="bottom",
+            fontsize=9.5, fontweight="bold")
+
+
+def save(fig, name):
+    fig.savefig(f"{FIG}/{name}.png", dpi=600); fig.savefig(f"{FIG}/{name}.pdf"); plt.close(fig)
+
+
+def convergence_fig(res, names, name, max_fes=C.MAX_FES):
+    """Three panels (one per stack), mean best-so-far RMSE, logarithmic evaluation axis.
+    The curve is drawn from the second recording point (~200 FEs); before that only the initial
+    population has been evaluated and a line from FE = 1 would only connect two recording points."""
+    fig, axs = plt.subplots(1, 3, figsize=(W2, 2.55))
     fes = np.linspace(1, max_fes, C.N_CURVE)
-    for j, n in enumerate(names):
-        cur = np.array([r["curve"] for r in res if r["stack"] == stack and r["algorithm"] == n])
-        ax.semilogy(fes / 1000, cur.mean(0), color=COLORS[j % 6], lw=2.2 if j == 0 else 1.3, label=n)
-    ax.set_xlabel("Function evaluations (×10³)"); ax.set_ylabel("Mean best RMSE (V)"); ax.set_title(title)
-    ax.legend(); fig.tight_layout(); fig.savefig(f"{FIG}/{fname}", dpi=300); plt.close(fig)
+    for k, (ax, s) in enumerate(zip(axs, C.STACKS)):
+        for j, n in enumerate(names):
+            cur = np.array([r["curve"] for r in res if r["stack"] == s and r["algorithm"] == n])
+            ax.loglog(fes[1:], cur.mean(0)[1:], color=COLORS[j % 7], ls=STYLES[j % 7], lw=1.7 if j == 0 else 1.1, label=n)
+        ax.set_xlabel("Function evaluations")
+        if k == 0: ax.set_ylabel("Mean best RMSE (V)")
+        ax.set_xlim(fes[1], max_fes); panel(ax, k)   # first recorded point after initialisation (~200 FEs)
+    h, l = axs[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="lower center", ncol=len(names), frameon=False, bbox_to_anchor=(0.5, -0.01))
+    fig.tight_layout(rect=(0, 0.09, 1, 1)); save(fig, name)
 
 
-def boxplot(F, names, fname, title):
-    fig, ax = plt.subplots(figsize=(5.2, 3.4))
-    ax.boxplot(F, tick_labels=names, showfliers=True)
-    ax.set_ylabel("Final RMSE (V)"); ax.set_title(title)
-    if F.max() / F.min() > 20:
-        ax.set_yscale("log")
-    plt.setp(ax.get_xticklabels(), rotation=20)
-    fig.tight_layout(); fig.savefig(f"{FIG}/{fname}", dpi=300); plt.close(fig)
+def box_fig(mats, names, name):
+    fig, axs = plt.subplots(1, 3, figsize=(W2, 2.6))
+    for k, (ax, F) in enumerate(zip(axs, mats)):
+        ax.boxplot(F, tick_labels=names, showfliers=True, widths=0.6,
+                   medianprops=dict(color="#d1495b"), flierprops=dict(markersize=3))
+        if F.max() / F.min() > 20: ax.set_yscale("log")
+        if k == 0: ax.set_ylabel("Final RMSE (V)")
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+        panel(ax, k)
+    fig.tight_layout(); save(fig, name)
 
 
 summary = {}
@@ -56,6 +81,7 @@ summary = {}
 res = json.load(open("results/raw_results.json"))["results"]
 algs = C.ALGORITHMS
 tA, tB, tC = [], [], []
+Fall = []
 for s in C.STACKS:
     lab = STACKS[s]["label"]
     F = matrix(res, s, algs); T = matrix(res, s, algs, "time")
@@ -69,20 +95,18 @@ for s in C.STACKS:
                        Max=F[:, j].max(), Std=F[:, j].std(ddof=1), RT_s=T[:, j].mean(), FriedmanRank=mr[j]))
     for row in wilcoxon_paired_vs(F, algs, "OLBPE", C.ALPHA, C.TIE_SIG):
         tC.append(dict(Stack=lab, **row))
-    # figures
+    # figure: measured vs modelled I-V and I-P
     I, V = load_data(s); b = best_run(res, s, "OLBPE")
     Ig = np.linspace(I.min(), I.max(), 300); Vg = stack_voltage(Ig, np.array(b["x"]), STACKS[s])
-    fig, ax = plt.subplots(1, 2, figsize=(8.4, 3.3))
-    ax[0].plot(I, V, "s", ms=5, mfc="#d1495b", mec="#7a1f2b", label="Measured")
-    ax[0].plot(Ig, Vg, "-", color="#0b4f8a", lw=1.8, label="OLBPE model")
-    ax[0].set_xlabel("Stack current (A)"); ax[0].set_ylabel("Stack voltage (V)"); ax[0].set_title(f"(a) I–V, {lab}")
-    ax[1].plot(I, I * V, "s", ms=5, mfc="#d1495b", mec="#7a1f2b", label="Measured")
-    ax[1].plot(Ig, Ig * Vg, "-", color="#0b4f8a", lw=1.8, label="OLBPE model")
-    ax[1].set_xlabel("Stack current (A)"); ax[1].set_ylabel("Stack power (W)"); ax[1].set_title(f"(b) I–P, {lab}")
-    for a in ax: a.legend()
-    fig.tight_layout(); fig.savefig(f"{FIG}/fit_{s}.png", dpi=300); plt.close(fig)
-    convergence(res, s, algs, f"conv_{s}.png", lab)
-    boxplot(F, algs, f"box_{s}.png", lab)
+    fig, ax = plt.subplots(1, 2, figsize=(W2, 2.6))
+    for k, (yd, ym, yl) in enumerate([(V, Vg, "Stack voltage (V)"), (I * V, Ig * Vg, "Stack power (W)")]):
+        ax[k].plot(I, yd, "s", ms=4, mfc="#d1495b", mec="#7a1f2b", mew=0.6, label="Measured")
+        ax[k].plot(Ig, ym, "-", color="#0b4f8a", lw=1.5, label="OLBPE model")
+        ax[k].set_xlabel("Stack current (A)"); ax[k].set_ylabel(yl); ax[k].legend(); panel(ax[k], k)
+    fig.tight_layout(); save(fig, f"fit_{s}")
+    Fall.append(F)
+convergence_fig(res, algs, "convergence")
+box_fig(Fall, algs, "boxplots")
 write("TableA_best_parameters", tA); write("TableB_statistics", tB); write("TableC_wilcoxon", tC)
 wtl = []
 for n in algs[1:]:
@@ -112,14 +136,16 @@ for s in C.STACKS:
 write("TableF_FE_to_target", tF)
 
 # ============================================================ residuals
-fig, axs = plt.subplots(1, 3, figsize=(12, 3.4))
-for ax, s in zip(axs, C.STACKS):
+fig, axs = plt.subplots(1, 3, figsize=(W2, 2.4))
+for k, (ax, s) in enumerate(zip(axs, C.STACKS)):
     I, V = load_data(s); b = best_run(res, s, "OLBPE")
     e = V - stack_voltage(I, np.array(b["x"]), STACKS[s])
-    ax.axhline(0, color="k", lw=0.8)
-    ax.vlines(I, 0, e, color="#0b4f8a", lw=1.2); ax.plot(I, e, "o", color="#d1495b", ms=5)
-    ax.set_xlabel("Stack current (A)"); ax.set_ylabel("Residual (V)"); ax.set_title(STACKS[s]["label"])
-fig.tight_layout(); fig.savefig(f"{FIG}/residuals.png", dpi=300); plt.close(fig)
+    ax.axhline(0, color="k", lw=0.7)
+    ax.vlines(I, 0, e, color="#0b4f8a", lw=1.0); ax.plot(I, e, "o", color="#d1495b", ms=3.5)
+    ax.set_xlabel("Stack current (A)")
+    if k == 0: ax.set_ylabel("Residual (V)")
+    panel(ax, k)
+fig.tight_layout(); save(fig, "residuals")
 tH = []
 for s in C.STACKS:
     I, V = load_data(s); b = best_run(res, s, "OLBPE")
@@ -145,13 +171,13 @@ for s in C.STACKS:
 write("TableG_identifiability", tG)
 
 # ============================================================ ablation
-def ablation(path, tag, budget_label):
+def ablation(path, tag, variants, fig_names=True):
     J = json.load(open(path)); ra = J["results"]; mf = J["config"]["max_fes"]
-    vars_ = list(C.ABLATION.keys())
-    tD, tE = [], []
+    vars_ = list(variants.keys())
+    tD, tE, mats = [], [], []
     for s in C.STACKS:
         lab = STACKS[s]["label"]
-        F = matrix(ra, s, vars_)
+        F = matrix(ra, s, vars_); mats.append(F)
         pF, chi2, mr = friedman(F, C.TIE_SIG)
         summary[s].update({f"abl{tag}_friedman_p": pF, f"abl{tag}_friedman_chi2": chi2})
         for j, n in enumerate(vars_):
@@ -160,15 +186,35 @@ def ablation(path, tag, budget_label):
                            FriedmanRank=mr[j]))
         for row in wilcoxon_paired_vs(F, vars_, vars_[0], C.ALPHA, C.TIE_SIG):
             tE.append(dict(Stack=lab, **row))
-        convergence(ra, s, vars_, f"ablation{tag}_conv_{s}.png", f"Ablation ({budget_label}) - {lab}", mf)
-        boxplot(F, vars_, f"ablation{tag}_box_{s}.png", f"Ablation ({budget_label}) - {lab}")
-    write(f"TableD{tag}_ablation", tD); write(f"TableE{tag}_ablation_wilcoxon", tE)
+    if fig_names:
+        short = ["full"] + [v.replace("w/o ", "w/o ") for v in vars_[1:]]
+        convergence_fig(ra, vars_, f"ablation{tag}_convergence", mf)
+        box_fig(mats, short, f"ablation{tag}_boxplots")
+    return tD, tE
 
 
-if os.path.exists("results/ablation_results.json"):
-    ablation("results/ablation_results.json", "", "40 000 FEs")
-if os.path.exists("results/ablation_results_5k.json"):
-    ablation("results/ablation_results_5k.json", "_5k", "5 000 FEs")
+for path, tag, var, out in [("results/ablation_results.json", "", C.ABLATION, "D"),
+                            ("results/ablation_results_5k.json", "_5k", C.ABLATION, "D"),
+                            ("results/ablation_ewl_split.json", "_ewl", C.EWL_SPLIT, "J"),
+                            ("results/ablation_ewl_split_5k.json", "_ewl_5k", C.EWL_SPLIT, "J")]:
+    if os.path.exists(path):
+        tD, tE = ablation(path, tag, var, fig_names=(out == "D"))
+        if out == "D":
+            write(f"TableD{tag}_ablation", tD); write(f"TableE{tag}_ablation_wilcoxon", tE)
+        else:
+            write(f"TableJ{tag.replace('_ewl', '')}_ewl_split", tD)
+            write(f"TableK{tag.replace('_ewl', '')}_ewl_split_wilcoxon", tE)
+
+# ============================================================ lambda profile (separable LS check)
+if os.path.exists(f"{TAB}/lambda_profile.csv"):
+    P = np.genfromtxt(f"{TAB}/lambda_profile.csv", delimiter=",", names=True)
+    fig, axs = plt.subplots(1, 3, figsize=(W2, 2.4))
+    for k, (ax, s) in enumerate(zip(axs, C.STACKS)):
+        ax.plot(P["lambda"], P[s], color="#0b4f8a")
+        ax.set_xlabel(r"$\lambda$")
+        if k == 0: ax.set_ylabel("Min. RMSE over other parameters (V)")
+        panel(ax, k)
+    fig.tight_layout(); save(fig, "lambda_profile")
 
 json.dump(summary, open(f"{TAB}/summary.json", "w"), indent=1)
 print("Tables in", TAB, "| Figures in", FIG)

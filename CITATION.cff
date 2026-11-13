@@ -14,7 +14,7 @@ authors:
   - family-names: Saeed
     given-names: Hisham Salam
     affiliation: Mustansiriyah University
-version: 1.0.0
+version: 1.1.0
 license: MIT
 repository-code: "https://github.com/ahmedsharba-svg/OLBPE-PEMFC"
 doi: 10.5281/zenodo.23620129

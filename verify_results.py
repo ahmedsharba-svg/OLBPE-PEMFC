@@ -50,7 +50,8 @@ def compare(ref_dir, new_dir):
     ablation runs that have not converged differ numerically, but every
     statistical conclusion (+/=/- sign) is the same; DIFF = a real difference."""
     real = False
-    for fn in ["raw_results.json", "ablation_results.json", "ablation_results_5k.json"]:
+    for fn in ["raw_results.json", "ablation_results.json", "ablation_results_5k.json",
+               "ablation_ewl_split.json", "ablation_ewl_split_5k.json"]:
         pa, pb = os.path.join(ref_dir, fn), os.path.join(new_dir, fn)
         if not (os.path.exists(pa) and os.path.exists(pb)):
             print(f"[skip] {fn} not found in both folders"); continue
@@ -67,6 +68,8 @@ def compare(ref_dir, new_dir):
 
     ta, tb = os.path.join(ref_dir, "tables"), os.path.join(new_dir, "tables")
     for fn in sorted(f for f in os.listdir(ta) if f.endswith(".csv")):
+        if not os.path.exists(os.path.join(tb, fn)):
+            print(f"[skip]  {fn} not found in {tb}"); continue
         ra = list(csv.DictReader(open(os.path.join(ta, fn))))
         rb = list(csv.DictReader(open(os.path.join(tb, fn))))
         hard, soft, notes = [], [], []
@@ -110,6 +113,13 @@ def compare(ref_dir, new_dir):
         ea, eb = list(csv.DictReader(open(fa))), list(csv.DictReader(open(fb)))
         ch = [f"{x['Stack']} {x['comparison']}: {x['sign']} -> {y['sign']}" for x, y in zip(ea, eb) if x["sign"] != y["sign"]]
         print("\nAblation (5k) conclusions: " + ("all 15 signs identical to the paper" if not ch else
+              "CHANGED:\n  " + "\n  ".join(ch)))
+        real |= bool(ch)
+    fa, fb = os.path.join(ta, "TableK_5k_ewl_split_wilcoxon.csv"), os.path.join(tb, "TableK_5k_ewl_split_wilcoxon.csv")
+    if os.path.exists(fa) and os.path.exists(fb):
+        ea, eb = list(csv.DictReader(open(fa))), list(csv.DictReader(open(fb)))
+        ch = [f"{x['Stack']} {x['comparison']}: {x['sign']} -> {y['sign']}" for x, y in zip(ea, eb) if x["sign"] != y["sign"]]
+        print("EWL decomposition (5k) conclusions: " + ("all 6 signs identical to the paper" if not ch else
               "CHANGED:\n  " + "\n  ".join(ch)))
         real |= bool(ch)
     print("\nRESULT: " + ("ALL RESULTS AND CONCLUSIONS REPRODUCED" if not real
